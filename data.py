@@ -1,25 +1,38 @@
 import tensorflow as tf
 import numpy as np
-from global_variable import  global_config
-def load_traindata_from_npz(filename):
+from global_variable import global_config
+import matplotlib.pyplot as plt
 
+def load_traindata_from_npz(filename):
+    #load traindata from npz file
     npz_file=np.load(filename)
-    #print(npz_file.files)          ['nonzero', 'shape']
-    data = np.zeros(npz_file['shape'])
-    # 稀疏矩阵
+    print("load npz file and the file shape is ↓")
+    print(npz_file['shape'])
+    #npz_file.files--------->['nonzero', 'shape']
+    data = np.zeros(npz_file['shape'],np.bool_)
+    # sparse matrix to normal matrix
     data[[x for x in npz_file['nonzero']]] = True
     return data
 
 
+def yeid_data_for_getgataset(initial_data):
+    #yield one phrase from data,for get_dataset to generator,
+    for item in initial_data:
+        yield  item*2.-1.
+        #yield a [n_bars,n_timesteps_inbar,n_pitches,n_tracks] format ndarray iter set.
 
-data_=load_traindata_from_npz(global_config['traindata_filename'])
-print(data_.shape)
 
-# nonzero_=data_['nonzero']
-# print(nonzero_.shape)
-# shape_=data_['shape']
-# print(shape_.shape)
-# print(data_.size)
+
+def get_dataset(initial_data,data_shape,batch_size):
+    dataset=tf.data.Dataset.from_generator(
+        lambda:yeid_data_for_getgataset(initial_data),tf.float32 )
+    dataset = dataset.shuffle(global_config['shuffle_size']).repeat().batch(batch_size)
+    return dataset.prefetch(global_config['prefetch_size'])
+
+
+
+
+
 
 
 
