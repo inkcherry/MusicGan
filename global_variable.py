@@ -7,6 +7,11 @@ global_config={
 #train config
 'shuffle_size':1000,
 'prefetch_size':1,
-'batch_size':64
+'batch_size':64,
+
+#sampling
+'sample_grid': [8,8],
+'latent_dim':128
+
 }
 

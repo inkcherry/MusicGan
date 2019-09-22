@@ -1,15 +1,15 @@
-from global_variable import  global_config
-import data
-import tensorflow as tf
-def load_data():
-    initial_data = data.load_traindata_from_npz(global_config['traindata_filename'])
+import  util as ut
 
-    dataset=data.get_dataset(initial_data,global_config['data_shape'],global_config['batch_size'])
-    # print(type(data_set))
+from model import  Model
+#------------------------------------------
+# tx,ty=ut.load_data()
+# print(type(tx))
+# print(tf.shape(tx))
 
-    train_x,train_y=dataset.make_one_shot_iterator().get_next(), None
-    return train_x,train_y
+#-----------------------------------------
+# d=ut.get_samples()
+# #
+# # print(d.shape)
+#-----------------------------------------
 
-tx,ty=load_data()
-print(type(tx))
-print(tf.shape(tx))
+model=Model()
