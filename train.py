@@ -1,5 +1,6 @@
 from discriminitor import Discriminator
 from generator import  Generator
+import numpy as np
 import  tensorflow as tf
 from data import  load_data   #one by one batch
 from data_pre import  load_traindata_from_npz,get_dataset
@@ -27,7 +28,23 @@ fake_x=gen(z,training=True)
 dis_real=dis(train_x,training=True)
 dis_fake=dis(fake_x,training=True)
 
+
+
 g_loss,d_loss =wloss(dis_real,dis_fake)
+#gradient penalties    ,without this  ,the loss will be E+9,10...
+eps_x = tf.random_uniform(
+    [global_config['batch_size']] + [1] * len(global_config['data_shape']))
+inter_x = eps_x * train_x + (1.0 - eps_x) * fake_x
+dis_x_inter_out = dis(inter_x, True)
+gradient_x = tf.gradients(dis_x_inter_out, inter_x)[0]
+slopes_x = tf.sqrt(1e-8 + tf.reduce_sum(
+    tf.square(gradient_x),
+    np.arange(1, gradient_x.get_shape().ndims)))
+gradient_penalty_x = tf.reduce_mean(tf.square(slopes_x - 1.0))
+d_loss+= 10.0 * gradient_penalty_x
+
+
+
 
 total_loss =d_loss+g_loss
 
