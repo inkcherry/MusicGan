@@ -23,15 +23,15 @@ from model import  Model
 #-----------------------------------------
 
 
-b = tf.Variable(tf.ones([1,20,20,1]))
-wc1 = tf.Variable(tf.ones([5,5,1,1]))
-
-
-
-m1 = tf.nn.conv2d(b, wc1, strides=[1,5,5,1], padding='SAME')
-m2 = tf.nn.conv2d(b, wc1, strides=[1,5,5,1], padding='VALID')
-m3 = tf.nn.conv2d(b, wc1, strides=[1,5,5,1])
-print(tf.get_shape(m1))
-print(tf.get_shape(m2))
-print(tf.get_shape(m3))
+# b = tf.Variable(tf.ones([1,20,20,1]))
+# wc1 = tf.Variable(tf.ones([5,5,1,1]))
+#
+#
+#
+# m1 = tf.nn.conv2d(b, wc1, strides=[1,5,5,1], padding='SAME')
+# m2 = tf.nn.conv2d(b, wc1, strides=[1,5,5,1], padding='VALID')
+# m3 = tf.nn.conv2d(b, wc1, strides=[1,5,5,1])
+# print(tf.get_shape(m1))
+# print(tf.get_shape(m2))
+# print(tf.get_shape(m3))
 

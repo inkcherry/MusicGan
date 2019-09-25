@@ -2,15 +2,16 @@ global_config={
 #sys config
 'traindata_filename': "/home/liumingzhi/projectfloder/traindata/traindata.npz",
 'data_shape':[4,48,84,5],    #[n_bars,n_timesteps_inbar,n_pitches,n_tracks]    Automate it in the future
-
 'beat_resolution': 12,
+'checkpoint_dir':"/home/liumingzhi/projectfloder/musicganckpt",
+                  
 #train config
 'shuffle_size':1000,
 'prefetch_size':1,
 'batch_size':64,
 
 'initial_learning_rate': 0.001,
-
+'n_dis_updates_per_gen_update': 5,   #5dis with 1gen  update
 
 'learning_rate_schedule':{
   'start': 45000,
@@ -35,6 +36,7 @@ global_config={
 
 
 #save
-'result_dir':"/home/liumingzhi/projectfloder/result"
+
+'result_dir':"/home/liumingzhi/projectfloder/musicganres"
 }
 

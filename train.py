@@ -71,14 +71,70 @@ gen_step_increment = tf.assign_add(gen_step, 1)
 # exit()
 # train_op_gen=gen_opt.minimize(g_loss,global_step,tf.trainable_variables(gen.scope_name))
 
-vars=tf.trainable_variables(gen.scope_name)
-print(vars)
+# vars=tf.trainable_variables(gen.scope_name)
+# print(vars)
 with tf.control_dependencies(update_ops + [gen_step_increment]):
     train_op_gen = gen_opt.minimize(g_loss, global_step,tf.trainable_variables(gen.scope_name))
 #
 
 tf_config = tf.ConfigProto()
 tf_config.gpu_options.allow_growth = True
+
+
+global_step=tf.train.get_global_step()
+steps_per_iter = global_config['n_dis_updates_per_gen_update']+1  #5dis +1gen
+hooks = [tf.train.NanTensorHook(total_loss)]
+
+tensor_logger={
+    'gen_step':gen_step,
+    'g_loss':g_loss,
+    'd_loss':d_loss
+}
+
+with tf.train.MonitoredTrainingSession(
+    save_checkpoint_steps=5000*steps_per_iter,   #per save 5000
+    save_summaries_steps=0,
+    checkpoint_dir=global_config['checkpoint_dir'],log_step_count_steps=0,
+    hooks=hooks,config=tf_config) as sess:
+
+    step=tf.train.global_step(sess,global_step)
+    print("now start training")
+    print("step="+str(step))
+    if step==0:
+        print("print format-------> step, g_loss,d_loss")
+    if step>=global_config['steps']:
+        print('finish')
+        exit()
+    while step<global_config['steps']:
+        if step < 10:
+            n_dis_updates = 10 * global_config['n_dis_updates_per_gen_update']  #
+        else:
+            n_dis_updates = global_config['n_dis_updates_per_gen_update']
+        for _ in range(n_dis_updates):
+            sess.run(train_op_dis)
+
+        log_loss_steps=1
+        if(step+1)%log_loss_steps==0:
+            step, _, tensor_logger_values = sess.run([
+                gen_step, train_op_gen,
+                tensor_logger])
+            # print(tensor_logger['gen_step'],tensor_logger['g_loss'],tensor_logger['d_loss'])
+            print("{}, {: 10.6E}, {: 10.6E}\n".format(
+                tensor_logger_values['gen_step'],
+                tensor_logger_values['g_loss'],
+                tensor_logger_values['d_loss']))
+        else:
+            step,_ = sess.run([gen_step,train_op_gen])
+
+        if sess.should_stop():
+            break
+        #here to sampler
+
+print("Training end")
+
+
+
+
 
 
 # print(type(train_x))
