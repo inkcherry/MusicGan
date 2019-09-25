@@ -1,30 +1,23 @@
-from global_variable import  global_config
+import  tensorflow as tf
 import data
-import scipy.stats
-import numpy as np
-import tensorflow as tf
-def load_data():
-    initial_data = data.load_traindata_from_npz(global_config['traindata_filename'])
-
-    dataset=data.get_dataset(initial_data,global_config['data_shape'],global_config['batch_size'])
-    # print(type(data_set))
-
-    train_x,train_y=dataset.make_one_shot_iterator().get_next(), None
-    return train_x,train_y
-
-
-
-
-def get_samples():
-    print("get sample----------------------")
-    sample_z = scipy.stats.truncnorm.rvs(
-            -2, 2, size=(np.prod(global_config['sample_grid']), global_config['latent_dim']))  #[8,8]    128
-
-    return sample_z
-
-
-
-
-
-
-
+import data_pre
+from global_variable import global_config
+def wloss(d_real,d_fake):
+    g_loss= -tf.reduce_mean(d_fake)
+    d_loss=-g_loss-tf.reduce_mean(d_real)
+    return g_loss,d_loss
+#
+# def load_train_data():
+#     data=data_pre.load_traindata_from_npz(global_config['filename'])
+#
+def get_scheduled_variable(start_value, end_value, start_step, end_step):
+    """Return a scheduled decayed/growing variable."""
+    if start_step > end_step:
+        raise ValueError("`start_step` must be smaller than `end_step`.")
+    if start_step == end_step:
+        return tf.constant(start_value)
+    global_step = tf.train.get_or_create_global_step()
+    zero_step = tf.constant(0, dtype=global_step.dtype)
+    schedule_step = tf.maximum(zero_step, global_step - start_step)
+    return tf.train.polynomial_decay(
+        start_value, schedule_step, end_step - start_step, end_value)

@@ -6,7 +6,7 @@ NORMALIZATION = None # 'batch_norm', 'layer_norm', None
 ACTIVATION = leaky_relu # relu, leaky_relu, tanh, sigmoid
 
 class Discriminator:
-    def __init__(self, n_tracks, beat_resolution=None, scope_name='Discriminator'):
+    def __init__(self, n_tracks=5, beat_resolution=12, scope_name='Discriminator'):
         self.n_tracks = n_tracks
         self.beat_resolution = beat_resolution
         self.scope_name = scope_name
@@ -15,7 +15,7 @@ class Discriminator:
         norm = get_normalization(NORMALIZATION, training)
         conv_layer = lambda i, f, k, s: ACTIVATION(norm(conv3d(i, f, k, s)))
 
-        with tf.variable_scope(self.name, reuse=tf.AUTO_REUSE):
+        with tf.variable_scope(self.scope_name, reuse=tf.AUTO_REUSE):
 
             h = tensor_in
 
@@ -33,7 +33,7 @@ class Discriminator:
             chroma = tf.reduce_sum(reshaped, 3)                      # 4, 4, 12
             if remainder:
                 chroma += summed[..., -remainder:, :]
-
+            print("mmmmmmmmmmmmmmmm")
             # Compute onset/offset feature
             padded = tf.pad(tensor_in[:, :, :-1],
                             ((0, 0), (0, 0), (1, 0), (0, 0), (0, 0)))
@@ -86,5 +86,6 @@ class Discriminator:
 
             h = tf.reshape(h, (-1, h.get_shape()[-1]))
             h = dense(h, 1)
+
 
         return h

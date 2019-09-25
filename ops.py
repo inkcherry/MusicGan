@@ -1,12 +1,12 @@
 """Tensorflow ops."""
 import tensorflow as tf
-from keras import  initializers
+# from keras import  initializers
 
-CONV_KERNEL_INITIALIZER =initializers.truncated_normal(stddev=0.05)
-DENSE_KERNEL_INITIALIZER =initializers.truncated_normal(stddev=0.05)
+# CONV_KERNEL_INITIALIZER =initializers.truncated_normal(stddev=0.05)
+# DENSE_KERNEL_INITIALIZER =initializers.truncated_normal(stddev=0.05)
 
-# CONV_KERNEL_INITIALIZER = tf.truncated_normal(stddev=0.05)
-# DENSE_KERNEL_INITIALIZER = tf.truncated_normal(stddev=0.05)
+CONV_KERNEL_INITIALIZER = tf.truncated_normal_initializer(stddev=0.05)
+DENSE_KERNEL_INITIALIZER = tf.truncated_normal_initializer(stddev=0.05)
 
 
 #i f k s --> input  ,filters,kernel_size,strides.
@@ -32,3 +32,6 @@ def get_normalization(norm_type, training=None):
     if norm_type is None or norm_type == '':
         return lambda x: x
     raise ValueError("Unrecognizable normalization type.")
+
+
+

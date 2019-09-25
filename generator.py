@@ -7,7 +7,7 @@ ACTIVATION = relu # relu, leaky_relu, tanh, sigmoid
 
 
 class Generator:
-    def __init__(self,n_tracks,scope_name='Generator'):
+    def __init__(self,n_tracks=5,scope_name='Generator'):
         self.n_tracks=n_tracks
         self.scope_name=scope_name
 
@@ -16,9 +16,16 @@ class Generator:
         norm=get_normalization(NORMALIZATION)
 
         tconv_layer = lambda i, f, k, s: ACTIVATION(norm(tconv3d(i, f, k, s)))
+        print("wwwwwwwwwwwwwwwwwwwwwwwwwwww")
+        print(self.n_tracks)
+        print(self.scope_name)
+        print(tensor_in)
+        # print(condition)
+        print(training)
+        print(slope)
+        # exit()
 
-
-        with tf.variable_scope(self.name, reuse=tf.AUTO_REUSE):
+        with tf.variable_scope(self.scope_name, reuse=tf.AUTO_REUSE):
 
             h = tensor_in
             h = tf.expand_dims(tf.expand_dims(tf.expand_dims(h, 1), 1), 1)
